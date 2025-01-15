@@ -8,5 +8,6 @@ namespace Microsoft.SCIM
     {
         string Identifier { get; set; }
         string SchemaIdentifier { get; set; }
+        string TenantId { get; set; }
     }
 }

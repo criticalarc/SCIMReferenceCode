@@ -12,6 +12,7 @@ namespace Microsoft.SCIM
         public QueryParameters(
             string schemaIdentifier,
             string path,
+            string tenantId,
             IFilter filter,
             IReadOnlyCollection<string> requestedAttributePaths,
             IReadOnlyCollection<string> excludedAttributePaths)
@@ -22,25 +23,29 @@ namespace Microsoft.SCIM
                 throw new ArgumentNullException(nameof(filter));
             }
 
+            this.TenantId = tenantId;
             this.AlternateFilters = filter.ToCollection();
         }
 
         public QueryParameters(
             string schemaIdentifier,
             string path,
+            string tenantId,
             IReadOnlyCollection<IFilter> alternateFilters,
             IReadOnlyCollection<string> requestedAttributePaths,
             IReadOnlyCollection<string> excludedAttributePaths)
             : base(schemaIdentifier, path, requestedAttributePaths, excludedAttributePaths)
         {
+            this.TenantId = tenantId;
             this.AlternateFilters = alternateFilters ?? throw new ArgumentNullException(nameof(alternateFilters));
         }
 
         public QueryParameters(
             string schemaIdentifier,
             string path,
+            string tenantId,
             IPaginationParameters paginationParameters)
-            : this(schemaIdentifier, path, Array.Empty<IFilter>(), Array.Empty<string>(), Array.Empty<string>())
+            : this(schemaIdentifier, path, tenantId, Array.Empty<IFilter>(), Array.Empty<string>(), Array.Empty<string>())
         {
             this.PaginationParameters = paginationParameters ?? throw new ArgumentNullException(nameof(paginationParameters));
         }
@@ -48,11 +53,13 @@ namespace Microsoft.SCIM
         [Obsolete("Use QueryParameters(string, string, IFilter, IReadOnlyCollection<string>, IReadOnlyCollection<string>) instead")]
         public QueryParameters(
             string schemaIdentifier,
+            string tenantId,
             IFilter filter,
             IReadOnlyCollection<string> requestedAttributePaths,
             IReadOnlyCollection<string> excludedAttributePaths)
             : this(
                 schemaIdentifier,
+                tenantId,
                 new SchemaIdentifier(schemaIdentifier).FindPath(),
                 filter,
                 requestedAttributePaths,
@@ -63,17 +70,21 @@ namespace Microsoft.SCIM
         [Obsolete("Use QueryParameters(string, string, IReadOnlyCollection<IFilter>, IReadOnlyCollection<string>, IReadOnlyCollection<string>) instead")]
         public QueryParameters(
             string schemaIdentifier,
+            string tenantId,
             IReadOnlyCollection<IFilter> alternateFilters,
             IReadOnlyCollection<string> requestedAttributePaths,
             IReadOnlyCollection<string> excludedAttributePaths)
             : this(
                 schemaIdentifier,
+                tenantId,
                 new SchemaIdentifier(schemaIdentifier).FindPath(),
                 alternateFilters,
                 requestedAttributePaths,
                 excludedAttributePaths)
         {
         }
+
+        public string TenantId { get; }
 
         public IReadOnlyCollection<IFilter> AlternateFilters
         {

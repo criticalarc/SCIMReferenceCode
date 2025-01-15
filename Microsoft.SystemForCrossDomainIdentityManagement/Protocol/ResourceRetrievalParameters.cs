@@ -13,6 +13,7 @@ namespace Microsoft.SCIM
             string schemaIdentifier,
             string path,
             string resourceIdentifier,
+            string tenantId,
             IReadOnlyCollection<string> requestedAttributePaths,
             IReadOnlyCollection<string> excludedAttributePaths)
             : base(schemaIdentifier, path, requestedAttributePaths, excludedAttributePaths)
@@ -26,14 +27,16 @@ namespace Microsoft.SCIM
                 new ResourceIdentifier()
                 {
                     Identifier = resourceIdentifier,
-                    SchemaIdentifier = this.SchemaIdentifier
+                    SchemaIdentifier = this.SchemaIdentifier,
+                    TenantId = tenantId
                 };
         }
 
         public ResourceRetrievalParameters(
             string schemaIdentifier,
             string path,
-            string resourceIdentifier)
+            string resourceIdentifier,
+            string tenantId)
             : base(schemaIdentifier, path)
         {
             if (null == resourceIdentifier)
@@ -45,7 +48,8 @@ namespace Microsoft.SCIM
                 new ResourceIdentifier()
                 {
                     Identifier = resourceIdentifier,
-                    SchemaIdentifier = this.SchemaIdentifier
+                    SchemaIdentifier = this.SchemaIdentifier,
+                    TenantId = tenantId
                 };
         }
 

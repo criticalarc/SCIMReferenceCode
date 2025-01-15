@@ -10,6 +10,13 @@ namespace Microsoft.SCIM
     [DataContract]
     public abstract class Resource : Schematized
     {
+        public virtual string TenantId
+        {
+            get;
+            set;
+        }
+
+
         [DataMember(Name = AttributeNames.ExternalIdentifier, IsRequired = false, EmitDefaultValue = false)]
         public string ExternalIdentifier
         {
