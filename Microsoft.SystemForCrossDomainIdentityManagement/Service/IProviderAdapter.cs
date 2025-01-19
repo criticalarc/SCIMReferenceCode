@@ -9,7 +9,7 @@ namespace Microsoft.SCIM
     public interface IProviderAdapter<T> where T : Resource
     {
         string SchemaIdentifier { get; }
-
+        string GetTenantId(HttpRequestMessage message);
         Task<Resource> Create(HttpRequestMessage request, Resource resource, string correlationIdentifier);
         Task Delete(HttpRequestMessage request, string identifier, string correlationIdentifier);
         Task<QueryResponseBase> Query(

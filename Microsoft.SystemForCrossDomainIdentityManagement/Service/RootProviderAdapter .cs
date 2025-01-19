@@ -31,7 +31,7 @@ namespace Microsoft.SCIM
             throw new HttpResponseException(HttpStatusCode.NotImplemented);
         }
 
-        public override IResourceIdentifier CreateResourceIdentifier(string identifier)
+        public override IResourceIdentifier CreateResourceIdentifier(HttpRequestMessage message, string identifier)
         {
             throw new HttpResponseException(HttpStatusCode.NotImplemented);
         }

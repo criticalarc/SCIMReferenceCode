@@ -22,6 +22,8 @@ namespace Microsoft.SCIM
 
         public abstract string SchemaIdentifier { get; }
 
+        public virtual string GetTenantId(HttpRequestMessage message) => string.Empty;
+        
         public virtual async Task<Resource> Create(HttpRequestMessage request, Resource resource, string correlationIdentifier)
         {
             if (null == request)
@@ -39,13 +41,14 @@ namespace Microsoft.SCIM
                 throw new ArgumentNullException(nameof(correlationIdentifier));
             }
 
+            resource.TenantId = GetTenantId(request);
             IReadOnlyCollection<IExtension> extensions = this.ReadExtensions();
             IRequest<Resource> creationRequest = new CreationRequest(request, resource, correlationIdentifier, extensions);
             Resource result = await this.Provider.CreateAsync(creationRequest).ConfigureAwait(false);
             return result;
         }
 
-        public virtual IResourceIdentifier CreateResourceIdentifier(string identifier)
+        public virtual IResourceIdentifier CreateResourceIdentifier(HttpRequestMessage message, string identifier)
         {
             if (string.IsNullOrWhiteSpace(identifier))
             {
@@ -56,7 +59,8 @@ namespace Microsoft.SCIM
                 new ResourceIdentifier()
                 {
                     Identifier = identifier,
-                    SchemaIdentifier = this.SchemaIdentifier
+                    SchemaIdentifier = this.SchemaIdentifier,
+                    TenantId = GetTenantId(message)
                 };
             return result;
         }
@@ -79,7 +83,7 @@ namespace Microsoft.SCIM
             }
 
             IReadOnlyCollection<IExtension> extensions = this.ReadExtensions();
-            IResourceIdentifier resourceIdentifier = this.CreateResourceIdentifier(identifier);
+            IResourceIdentifier resourceIdentifier = this.CreateResourceIdentifier(request, identifier);
             IRequest<IResourceIdentifier> deletionRequest =
                 new DeletionRequest(request, resourceIdentifier, correlationIdentifier, extensions);
             await this.Provider.DeleteAsync(deletionRequest).ConfigureAwait(false);
@@ -126,8 +130,9 @@ namespace Microsoft.SCIM
             }
 
             string path = this.GetPath(request);
+            string tenantId = GetTenantId(request);
             IQueryParameters queryParameters =
-                new QueryParameters(this.SchemaIdentifier, path, filters, requestedAttributePaths, excludedAttributePaths);
+                new QueryParameters(this.SchemaIdentifier, path, tenantId, filters, requestedAttributePaths, excludedAttributePaths);
             queryParameters.PaginationParameters = paginationParameters;
             IReadOnlyCollection<IExtension> extensions = this.ReadExtensions();
             IRequest<IQueryParameters> queryRequest =
@@ -171,6 +176,7 @@ namespace Microsoft.SCIM
                 throw new ArgumentNullException(nameof(correlationIdentifier));
             }
 
+            resource.TenantId = GetTenantId(request);
             IReadOnlyCollection<IExtension> extensions = this.ReadExtensions();
             IRequest<Resource> replaceRequest = new ReplaceRequest(request, resource, correlationIdentifier, extensions);
             Resource result = await this.Provider.ReplaceAsync(replaceRequest).ConfigureAwait(false);
@@ -205,11 +211,13 @@ namespace Microsoft.SCIM
             }
 
             string path = this.GetPath(request);
+            string tenantId = this.GetTenantId(request);
             IResourceRetrievalParameters retrievalParameters =
                 new ResourceRetrievalParameters(
                         this.SchemaIdentifier,
                         path,
                         identifier,
+                        tenantId,
                         requestedAttributePaths,
                         excludedAttributePaths);
             IReadOnlyCollection<IExtension> extensions = this.ReadExtensions();
@@ -235,7 +243,7 @@ namespace Microsoft.SCIM
                 throw new ArgumentNullException(nameof(correlationIdentifier));
             }
 
-            IResourceIdentifier resourceIdentifier = this.CreateResourceIdentifier(identifier);
+            IResourceIdentifier resourceIdentifier = this.CreateResourceIdentifier(request, identifier);
             IPatch patch =
                 new Patch
                 {

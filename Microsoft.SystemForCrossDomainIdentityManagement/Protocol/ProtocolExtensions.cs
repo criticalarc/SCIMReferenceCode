@@ -700,6 +700,7 @@ namespace Microsoft.SCIM
                     schemaIdentifier,
                     path,
                     resource.Identifier,
+                    resource.TenantId,
                     requestedAttributePaths,
                     excludedAttributePaths);
             string query = retrievalParameters.ToString();
@@ -831,7 +832,7 @@ namespace Microsoft.SCIM
                 schemaIdentifier = resource.GetSchemaIdentifier();
             }
 
-            IResourceIdentifier result = new ResourceIdentifier(schemaIdentifier, resource.Identifier);
+            IResourceIdentifier result = new ResourceIdentifier(schemaIdentifier, resource.Identifier, resource.TenantId);
             return result;
         }
 

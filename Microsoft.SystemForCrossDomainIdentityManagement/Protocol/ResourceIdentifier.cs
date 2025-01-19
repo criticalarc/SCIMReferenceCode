@@ -13,7 +13,7 @@ namespace Microsoft.SCIM
         {
         }
 
-        public ResourceIdentifier(string schemaIdentifier, string resourceIdentifier)
+        public ResourceIdentifier(string schemaIdentifier, string resourceIdentifier, string tenantId)
         {
             if (string.IsNullOrWhiteSpace(schemaIdentifier))
             {
@@ -27,8 +27,15 @@ namespace Microsoft.SCIM
 
             this.SchemaIdentifier = schemaIdentifier;
             this.Identifier = resourceIdentifier;
+            this.TenantId = tenantId;
         }
 
+        public string TenantId
+        {
+            get;
+            set;
+        }
+        
         public string Identifier
         {
             get;
@@ -64,6 +71,11 @@ namespace Microsoft.SCIM
                 return false;
             }
 
+            if (!string.Equals(this.TenantId, otherIdentifier.TenantId, StringComparison.OrdinalIgnoreCase))
+            {
+                return false;
+            }
+
             return true;
         }
 
@@ -71,7 +83,8 @@ namespace Microsoft.SCIM
         {
             int identifierCode = string.IsNullOrWhiteSpace(this.Identifier) ? 0 : this.Identifier.GetHashCode(StringComparison.InvariantCulture);
             int schemaIdentifierCode = string.IsNullOrWhiteSpace(this.SchemaIdentifier) ? 0 : this.SchemaIdentifier.GetHashCode(StringComparison.InvariantCulture);
-            int result = identifierCode ^ schemaIdentifierCode;
+            int tenantIdentifierCode = string.IsNullOrWhiteSpace(this.TenantId) ? 0 : this.TenantId.GetHashCode(StringComparison.InvariantCulture);
+            int result = identifierCode ^ schemaIdentifierCode ^ tenantIdentifierCode;
             return result;
         }
 

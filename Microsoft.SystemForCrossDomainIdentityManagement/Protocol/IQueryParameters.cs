@@ -10,5 +10,6 @@ namespace Microsoft.SCIM
     {
         IReadOnlyCollection<IFilter> AlternateFilters { get; }
         IPaginationParameters PaginationParameters { get; set; }
+        string TenantId { get; }
     }
 }
