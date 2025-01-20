@@ -18,6 +18,8 @@ namespace Microsoft.SCIM
         MatchesExpression,
         NotBitAnd,
         NotEquals,
-        NotMatchesExpression
+        NotMatchesExpression,
+        Contains,
+        StartsWith
     }
 }
