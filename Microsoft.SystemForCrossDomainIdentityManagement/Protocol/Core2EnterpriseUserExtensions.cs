@@ -267,6 +267,31 @@ namespace Microsoft.SCIM
                         user.UserName = value.Value;
                     }
                     break;
+                
+                case AttributeNames.UserType:
+                    value = operation.Value.SingleOrDefault();
+
+                    if (OperationName.Remove == operation.Name)
+                    {
+                        if ((null == value) || string.Equals(user.UserType, value.Value, StringComparison.OrdinalIgnoreCase))
+                        {
+                            value = null;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    if (null == value)
+                    {
+                        user.UserType = null;
+                    }
+                    else
+                    {
+                        user.UserType = value.Value;
+                    }
+                    break;
             }
         }
 
@@ -813,6 +838,27 @@ namespace Microsoft.SCIM
                 name.FamilyName = value;
             }
 
+            if
+            (
+                string.Equals(
+                    Microsoft.SCIM.AttributeNames.Formatted,
+                    operation.Path.ValuePath.AttributePath,
+                    StringComparison.OrdinalIgnoreCase)
+            )
+            {
+                value = operation.Value?.Single().Value;
+                if
+                (
+                    value != null
+                    && OperationName.Remove == operation.Name
+                    && string.Equals(value, name.FamilyName, StringComparison.OrdinalIgnoreCase)
+                )
+                {
+                    value = null;
+                }
+                name.Formatted = value;
+            }
+
             if (string.IsNullOrWhiteSpace(name.FamilyName) && string.IsNullOrWhiteSpace(name.GivenName))
             {
                 if (nameExisting != null)
@@ -961,6 +1007,8 @@ namespace Microsoft.SCIM
             {
                 value = null;
             }
+
+            phoneNumber ??= new PhoneNumber();
             phoneNumber.Value = value;
 
             if (string.IsNullOrWhiteSpace(phoneNumber.Value))

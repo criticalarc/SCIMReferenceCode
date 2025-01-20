@@ -33,7 +33,7 @@ namespace Microsoft.SCIM
     // The clause, a eq 1 is one group,
     // the first pair of bracketed clauses are in a second group,
     // and the second pair of bracketed clauses are in a third group.
-    internal sealed class FilterExpression : IFilterExpression
+    public sealed class FilterExpression : IFilterExpression
     {
         private const char BracketClose = ')';
         private const char Escape = '\\';
@@ -271,6 +271,9 @@ namespace Microsoft.SCIM
                     case ComparisonOperatorValue.bitAnd:
                         this.filterOperator = ComparisonOperator.BitAnd;
                         break;
+                    case ComparisonOperatorValue.sw:
+                        this.filterOperator = ComparisonOperator.StartsWith;
+                        break;
                     case ComparisonOperatorValue.ew:
                         this.filterOperator = ComparisonOperator.EndsWith;
                         break;
@@ -288,6 +291,9 @@ namespace Microsoft.SCIM
                         break;
                     case ComparisonOperatorValue.lt:
                         this.filterOperator = ComparisonOperator.LessThan;
+                        break;
+                    case ComparisonOperatorValue.co:
+                        this.filterOperator = ComparisonOperator.Contains;
                         break;
                     case ComparisonOperatorValue.includes:
                         this.filterOperator = ComparisonOperator.Includes;

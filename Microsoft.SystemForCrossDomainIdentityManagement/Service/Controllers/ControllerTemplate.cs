@@ -18,10 +18,10 @@ namespace Microsoft.SCIM
         private const string HeaderKeyContentType = "Content-Type";
         private const string HeaderKeyLocation = "Location";
 
-        internal readonly IMonitor monitor;
-        internal readonly IProvider provider;
+        private readonly IMonitor monitor;
+        protected readonly IProvider provider;
 
-        internal ControllerTemplate(IProvider provider, IMonitor monitor)
+        protected ControllerTemplate(IProvider provider, IMonitor monitor)
         {
             this.monitor = monitor;
             this.provider = provider;
@@ -77,7 +77,7 @@ namespace Microsoft.SCIM
 
     public abstract class ControllerTemplate<T> : ControllerTemplate where T : Resource
     {
-        internal ControllerTemplate(IProvider provider, IMonitor monitor)
+        protected ControllerTemplate(IProvider provider, IMonitor monitor)
             : base(provider, monitor)
         {
         }
