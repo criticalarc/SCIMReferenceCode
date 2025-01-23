@@ -5,10 +5,10 @@
     <TargetFramework>net7.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Title>Microsoft SCIM</Title>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <Version>1.0.1</Version>
-    <FileVersion>1.0.1</FileVersion>
-    <PackageVersion>1.0.1</PackageVersion>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
+    <Version>1.0.2</Version>
+    <FileVersion>1.0.2</FileVersion>
+    <PackageVersion>1.0.2</PackageVersion>
     <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 
