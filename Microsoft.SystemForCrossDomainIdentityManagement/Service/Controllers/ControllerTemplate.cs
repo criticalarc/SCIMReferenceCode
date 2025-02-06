@@ -551,7 +551,7 @@ namespace Microsoft.SCIM
                     monitor.Report(notification);
                 }
 
-                throw;
+                return this.ScimError(HttpStatusCode.BadRequest, exception.Message);
             }
         }
 
@@ -649,7 +649,7 @@ namespace Microsoft.SCIM
                     monitor.Report(notification);
                 }
 
-                throw;
+                return this.ScimError(HttpStatusCode.BadRequest, exception.Message);
             }
         }
 

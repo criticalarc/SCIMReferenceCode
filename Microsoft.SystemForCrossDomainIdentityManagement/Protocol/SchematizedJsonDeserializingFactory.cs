@@ -2,6 +2,8 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------
 
+using Newtonsoft.Json.Linq;
+
 namespace Microsoft.SCIM
 {
     using System;
@@ -161,7 +163,14 @@ namespace Microsoft.SCIM
             switch (value)
             {
                 case IEnumerable schemas:
-                    schemaIdentifiers = schemas.ToCollection<string>();
+                    try
+                    {
+                        schemaIdentifiers = ((JArray)schemas).Values<string>().ToCollection<string>();
+                    }
+                    catch(ArgumentException)
+                    {
+                        schemaIdentifiers = schemas.ToCollection<string>();
+                    }
                     break;
                 default:
                     throw new ArgumentException(
