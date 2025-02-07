@@ -2,6 +2,8 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 //------------------------------------------------------------
 
+using Newtonsoft.Json.Linq;
+
 namespace Microsoft.SCIM
 {
     using System;
@@ -110,6 +112,44 @@ namespace Microsoft.SCIM
             TDataContract result = this.Create(keyedValues);
             return result;
         }
+        
+        private static void ParseJsonValue(object jsonValue)
+        {
+            if (jsonValue is JProperty jProperty)
+            {
+                // HACK: The DataContractSerializer cannot The value 'True' cannot be parsed as the type 'Boolean'
+                if (jProperty.Value.ToString() == "True")
+                    jProperty.Value = "true";
+            
+                if (jProperty.Value.ToString() == "False")
+                    jProperty.Value = "false";
+            }
+            if (jsonValue is JObject jObject)
+            {
+                foreach (var jProp in jObject.Properties())
+                {
+                    ParseJsonValue(jProp);
+                }
+            }
+            if (jsonValue is JArray jArray)
+            {
+                foreach (var jToken in jArray)
+                {
+                    ParseJsonValue(jToken);
+                }
+            }
+        }
+    
+        private static void ParseJson(IReadOnlyDictionary<string, object> json)
+        {
+            if (json == null)
+                return;
+
+            foreach (var jsonKvp in json)
+            {
+                ParseJsonValue(jsonKvp.Value);
+            }
+        }
 
         public IReadOnlyDictionary<string, object> Normalize(IReadOnlyDictionary<string, object> json)
         {
@@ -118,6 +158,8 @@ namespace Microsoft.SCIM
                 throw new ArgumentNullException(nameof(json));
             }
 
+            // HACK: Fixes "invalid" json data sent by the Validator. Specifically "primary": "True" cannot be deserialized by the DataContractSerializer
+            ParseJson(json);
             IReadOnlyDictionary<string, object> result = this.JsonNormalizer.Normalize(json);
             return result;
         }
