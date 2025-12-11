@@ -12,13 +12,16 @@ namespace Microsoft.SCIM
 
     internal class JsonSerializer : IJsonSerializable
     {
+        public static DataContractJsonSerializerSettings GetDataContractJsonSerializerSettings() 
+            => new ()
+        {
+            EmitTypeInformation = EmitTypeInformation.Never,
+            // SCIM uses the ISO 8601 which is the round trip - https://learn.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#Roundtrip
+            DateTimeFormat = new DateTimeFormat("O")
+        };
+
         private static readonly Lazy<DataContractJsonSerializerSettings> SerializerSettings =
-            new Lazy<DataContractJsonSerializerSettings>(
-                () =>
-                    new DataContractJsonSerializerSettings()
-                    {
-                        EmitTypeInformation = EmitTypeInformation.Never
-                    });
+            new Lazy<DataContractJsonSerializerSettings>(GetDataContractJsonSerializerSettings);
 
         private readonly object dataContractValue;
 
