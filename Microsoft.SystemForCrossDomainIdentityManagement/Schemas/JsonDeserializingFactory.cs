@@ -16,12 +16,7 @@ namespace Microsoft.SCIM
     public abstract class JsonDeserializingFactory<TDataContract> : IJsonNormalizationBehavior
     {
         private static readonly Lazy<DataContractJsonSerializerSettings> JsonSerializerSettings =
-            new Lazy<DataContractJsonSerializerSettings>(
-                () =>
-                    new DataContractJsonSerializerSettings()
-                    {
-                        EmitTypeInformation = EmitTypeInformation.Never
-                    });
+            new Lazy<DataContractJsonSerializerSettings>(SCIM.JsonSerializer.GetDataContractJsonSerializerSettings);
 
         private static readonly Lazy<DataContractJsonSerializer> JsonSerializer =
             new Lazy<DataContractJsonSerializer>(
