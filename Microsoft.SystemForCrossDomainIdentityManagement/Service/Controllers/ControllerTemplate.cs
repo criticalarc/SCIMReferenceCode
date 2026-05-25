@@ -287,7 +287,7 @@ namespace Microsoft.SCIM
 
         [HttpGet(ControllerTemplate.AttributeValueIdentifier)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get", Justification = "The names of the methods of a controller must correspond to the names of hypertext markup verbs")]
-        public virtual async Task<IActionResult> Get([FromQuery]string identifier)
+        public virtual async Task<IActionResult> Get([FromRoute]string identifier)
         {
             string correlationIdentifier = null;
             try
