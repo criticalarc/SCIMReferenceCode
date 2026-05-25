@@ -7,14 +7,12 @@ namespace Microsoft.SCIM
     using System.IO;
     using System.Net;
     using System.Net.Http;
-    using System.Net.Http.Formatting;
     using System.Net.Http.Headers;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
-    using System.Web.Http;
 
-    public sealed class SchematizedMediaTypeFormatter : MediaTypeFormatter
+    public sealed class SchematizedMediaTypeFormatter
     {
         private static readonly Encoding Encoding = Encoding.UTF8;
 
@@ -52,6 +50,8 @@ namespace Microsoft.SCIM
             this.DeserializingFactory = deserializingFactory ?? throw new ArgumentNullException(nameof(deserializingFactory));
         }
 
+        public IList<MediaTypeHeaderValue> SupportedMediaTypes { get; } = new List<MediaTypeHeaderValue>();
+
         private JsonDeserializingFactory<Schematized> DeserializingFactory
         {
             get;
@@ -71,7 +71,7 @@ namespace Microsoft.SCIM
             return result;
         }
 
-        public override bool CanReadType(Type type)
+        public bool CanReadType(Type type)
         {
             if (null == type)
             {
@@ -82,7 +82,7 @@ namespace Microsoft.SCIM
             return result;
         }
 
-        public override bool CanWriteType(Type type)
+        public bool CanWriteType(Type type)
         {
             if (null == type)
             {
@@ -175,25 +175,24 @@ namespace Microsoft.SCIM
             }
             catch (ArgumentException)
             {
-                return new HttpResponseException(HttpStatusCode.BadRequest);
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
             catch (NotSupportedException)
             {
-                return new HttpResponseException(HttpStatusCode.BadRequest);
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
 #pragma warning disable CA1031 // Do not catch general exception types
             catch
             {
-                return new HttpResponseException(HttpStatusCode.BadRequest);
+                throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
 #pragma warning restore CA1031 // Do not catch general exception types
         }
 
-        public override Task<object> ReadFromStreamAsync(
+        public Task<object> ReadFromStreamAsync(
             Type type,
             Stream readStream,
-            HttpContent content,
-            IFormatterLogger formatterLogger)
+            HttpContent content)
         {
             if (null == type)
             {
@@ -209,16 +208,15 @@ namespace Microsoft.SCIM
             return result;
         }
 
-        public override Task<object> ReadFromStreamAsync(
+        public Task<object> ReadFromStreamAsync(
             Type type,
             Stream readStream,
             HttpContent content,
-            IFormatterLogger formatterLogger,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            return this.ReadFromStreamAsync(type, readStream, content, formatterLogger);
+            return this.ReadFromStreamAsync(type, readStream, content);
         }
 
         private async Task WriteToStream(
@@ -281,7 +279,7 @@ namespace Microsoft.SCIM
             writeStream.Flush();
         }
 
-        public override Task WriteToStreamAsync(
+        public Task WriteToStreamAsync(
             Type type,
             object value,
             Stream writeStream,
@@ -306,7 +304,7 @@ namespace Microsoft.SCIM
             return result;
         }
 
-        public override Task WriteToStreamAsync(
+        public Task WriteToStreamAsync(
             Type type,
             object value,
             Stream writeStream,

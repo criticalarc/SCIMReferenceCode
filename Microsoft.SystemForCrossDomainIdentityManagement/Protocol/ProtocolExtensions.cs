@@ -11,7 +11,6 @@ namespace Microsoft.SCIM
     using System.IO;
     using System.Linq;
     using System.Net.Http;
-    using System.Net.Http.Formatting;
     using System.Text;
     using System.Text.RegularExpressions;
     using System.Threading.Tasks;
@@ -444,12 +443,10 @@ namespace Microsoft.SCIM
                 {
                     string contentType = MediaTypes.Protocol;
 
-                    MediaTypeFormatter contentFormatter = new JsonMediaTypeFormatter();
-                    requestContent =
-                        new ObjectContent<Dictionary<string, object>>(
-                            json,
-                            contentFormatter,
-                            contentType);
+                    requestContent = new StringContent(
+                        JsonConvert.SerializeObject(json),
+                        Encoding.UTF8,
+                        contentType);
                     result = new HttpRequestMessage(ProtocolExtensions.PatchMethod, resourceIdentifier);
                     result.Content = requestContent;
                     requestContent = null;
@@ -499,12 +496,10 @@ namespace Microsoft.SCIM
                 HttpContent requestContent = null;
                 try
                 {
-                    MediaTypeFormatter contentFormatter = new JsonMediaTypeFormatter();
-                    requestContent =
-                        new ObjectContent<Dictionary<string, object>>(
-                            json,
-                            contentFormatter,
-                            MediaTypes.Json);
+                    requestContent = new StringContent(
+                        JsonConvert.SerializeObject(json),
+                        Encoding.UTF8,
+                        MediaTypes.Json);
                     result = new HttpRequestMessage(ProtocolExtensions.PatchMethod, resourceIdentifier);
                     result.Content = requestContent;
                     requestContent = null;
@@ -555,12 +550,10 @@ namespace Microsoft.SCIM
                 HttpContent requestContent = null;
                 try
                 {
-                    MediaTypeFormatter contentFormatter = new JsonMediaTypeFormatter();
-                    requestContent =
-                        new ObjectContent<Dictionary<string, object>>(
-                            json,
-                            contentFormatter,
-                            contentType);
+                    requestContent = new StringContent(
+                        JsonConvert.SerializeObject(json),
+                        Encoding.UTF8,
+                        contentType);
                     result = new HttpRequestMessage(HttpMethod.Put, resourceIdentifier);
                     result.Content = requestContent;
                     requestContent = null;
@@ -611,12 +604,10 @@ namespace Microsoft.SCIM
                 HttpContent requestContent = null;
                 try
                 {
-                    MediaTypeFormatter contentFormatter = new JsonMediaTypeFormatter();
-                    requestContent =
-                        new ObjectContent<Dictionary<string, object>>(
-                            json,
-                            contentFormatter,
-                            contentType);
+                    requestContent = new StringContent(
+                        JsonConvert.SerializeObject(json),
+                        Encoding.UTF8,
+                        contentType);
                     result = new HttpRequestMessage(HttpMethod.Post, typeResourceIdentifier);
                     result.Content = requestContent;
                     requestContent = null;
