@@ -9,7 +9,6 @@ namespace Microsoft.SCIM
     using System.Linq;
     using System.Net;
     using System.Web;
-    using System.Web.Http;
 
     public sealed class ResourceQuery : IResourceQuery
     {

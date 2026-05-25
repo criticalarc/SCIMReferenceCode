@@ -8,9 +8,7 @@ namespace Microsoft.SCIM
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using System.Web.Http;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.AspNetCore.Mvc.WebApiCompatShim;
 
     public abstract class ControllerTemplate : ControllerBase
     {
@@ -39,7 +37,7 @@ namespace Microsoft.SCIM
 
             if (!this.Response.Headers.ContainsKey(ControllerTemplate.HeaderKeyContentType))
             {
-                this.Response.Headers.Add(ControllerTemplate.HeaderKeyContentType, ProtocolConstants.ContentType);
+                this.Response.Headers[ControllerTemplate.HeaderKeyContentType] = ProtocolConstants.ContentType;
             }
 
             Uri baseResourceIdentifier = this.ConvertRequest().GetBaseResourceIdentifier();
@@ -47,14 +45,19 @@ namespace Microsoft.SCIM
             string resourceLocation = resourceIdentifier.AbsoluteUri;
             if (!this.Response.Headers.ContainsKey(ControllerTemplate.HeaderKeyLocation))
             {
-                this.Response.Headers.Add(ControllerTemplate.HeaderKeyLocation, resourceLocation);
+                this.Response.Headers[ControllerTemplate.HeaderKeyLocation] = resourceLocation;
             }
         }
 
         protected HttpRequestMessage ConvertRequest()
         {
-            HttpRequestMessageFeature hreqmf = new HttpRequestMessageFeature(this.HttpContext);
-            HttpRequestMessage result = hreqmf.HttpRequestMessage;
+            var req = this.HttpContext.Request;
+            var uri = new Uri($"{req.Scheme}://{req.Host}{req.Path}{req.QueryString}");
+            var result = new HttpRequestMessage(new HttpMethod(req.Method), uri);
+            foreach (var header in req.Headers)
+            {
+                result.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+            }
             return result;
         }
 
@@ -284,7 +287,7 @@ namespace Microsoft.SCIM
 
         [HttpGet(ControllerTemplate.AttributeValueIdentifier)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get", Justification = "The names of the methods of a controller must correspond to the names of hypertext markup verbs")]
-        public virtual async Task<IActionResult> Get([FromUri]string identifier)
+        public virtual async Task<IActionResult> Get([FromQuery]string identifier)
         {
             string correlationIdentifier = null;
             try

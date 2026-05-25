@@ -4,7 +4,6 @@ namespace Microsoft.SCIM
 {
     using System.Net;
     using System.Net.Http;
-    using System.Web.Http;
 
     internal abstract class HttpResponseExceptionFactory<T>
     {
