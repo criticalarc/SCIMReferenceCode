@@ -8,6 +8,7 @@ namespace Microsoft.SCIM
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
 
     public abstract class ControllerTemplate : ControllerBase
@@ -52,12 +53,14 @@ namespace Microsoft.SCIM
         protected HttpRequestMessage ConvertRequest()
         {
             var req = this.HttpContext.Request;
-            var uri = new Uri($"{req.Scheme}://{req.Host}{req.Path}{req.QueryString}");
+            var fullPath = req.PathBase + req.Path;
+            var uri = new Uri($"{req.Scheme}://{req.Host}{fullPath}{req.QueryString}");
             var result = new HttpRequestMessage(new HttpMethod(req.Method), uri);
             foreach (var header in req.Headers)
             {
                 result.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
             }
+            result.Options.Set(new HttpRequestOptionsKey<HttpContext>(nameof(HttpContext)), this.HttpContext);
             return result;
         }
 
